@@ -1,10 +1,8 @@
 // Admin-only download of an uploaded file. Checks the admin login and the database row before sending anything.
-import fs from 'node:fs/promises'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 import { verifyAdminSession } from '@/lib/admin-auth'
-import { storedPath } from '@/lib/custom-design-files'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -26,23 +24,21 @@ export async function GET(_req, { params }) {
   const t = TABLES[kind]
   if (!t || !/^\d+$/.test(id)) return new NextResponse('Not found', { status: 404 })
 
-  const { rows } = await pool.query(`SELECT original_name, mime_type FROM ${t.table} WHERE ${t.owner} = $1 AND stored_name = $2`, [Number(id), file])
-  if (!rows[0]) return new NextResponse('Not found', { status: 404 })
+  const { rows } = await pool.query(
+    `SELECT original_name, data FROM ${t.table} WHERE ${t.owner} = $1 AND stored_name = $2`,
+    [Number(id), file]
+  )
+  if (!rows[0] || !rows[0].data) return new NextResponse('File missing on the server', { status: 404 })
 
-  try {
-    const data = await fs.readFile(storedPath(kind, id, file))
-    const safeName = encodeURIComponent(rows[0].original_name)
-    const inlineType = INLINE[file.split('.').pop().toLowerCase()]
-    return new NextResponse(data, {
-      headers: {
-        'Content-Type': inlineType || 'application/octet-stream',
-        'Content-Disposition': `${inlineType ? 'inline' : 'attachment'}; filename*=UTF-8''${safeName}`,
-        'Content-Security-Policy': "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox",
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'private, no-store',
-      },
-    })
-  } catch {
-    return new NextResponse('File missing on the server', { status: 404 })
-  }
+  const safeName = encodeURIComponent(rows[0].original_name)
+  const inlineType = INLINE[file.split('.').pop().toLowerCase()]
+  return new NextResponse(new Uint8Array(rows[0].data), {
+    headers: {
+      'Content-Type': inlineType || 'application/octet-stream',
+      'Content-Disposition': `${inlineType ? 'inline' : 'attachment'}; filename*=UTF-8''${safeName}`,
+      'Content-Security-Policy': "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox",
+      'X-Content-Type-Options': 'nosniff',
+      'Cache-Control': 'private, no-store',
+    },
+  })
 }

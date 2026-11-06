@@ -80,4 +80,4 @@ export async function readStoredFile(db, folder, id, stored_name) {
     [Number(id), stored_name]
   )
   return rows[0] ?? null
-}
+} 
