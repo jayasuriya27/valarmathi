@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-lime: #8be432;
+  --color-cerulean: #0f8dd7;
+  --color-charcoal: #737373;
+  --color-lightgray: #c8cac9;
+  --color-smoke: #f6f6f6;
+  --color-ink: #1d2328;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), Georgia, serif;
+}
+
+html, body {
+  overflow-x: clip;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-smoke);
+  color: #333;
+}
+
+/* Cards that move on their own (home page strip) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 45s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Slow zoom on the active hero photo */
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+.kenburns {
+  animation: kenburns 9s ease-out forwards;
+}
+
+/* WhatsApp button pulse */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
+  70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+.pulse-ring {
+  animation: pulse-ring 2.2s infinite;
+}
+
+/* Respect people who turn animations off in their device settings */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .kenburns, .pulse-ring { animation: none; }
+  html { scroll-behavior: auto; }
+}
