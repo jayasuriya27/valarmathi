@@ -32,7 +32,7 @@ export const features = [
   { icon: ShieldCheck, title: 'Child-Safe Rounded Edges', text: 'Our advanced edge moulding technology transforms sharp furniture edges into smooth, rounded finishes, reducing the risk of accidental bumps and injuries while creating a safer environment for children and families.' },
 ]
 
-// Hero slider content configured with badges (First: Since 1985, Second: Salem, Others: No badge)
+// Hero slider content configured with badges for the workshop, moulded edges, and Salem.
 export const heroSlides = [
   {
     image: '/images/hero/hero-video-poster.jpg',
@@ -44,8 +44,15 @@ export const heroSlides = [
     href: '/about', cta: 'Our story',
   },
   {
+    image: '/images/hero/hero-video-poster.jpg',
+    video: '/videos/hero2.mp4',
+    duration: 15000,
+    title: 'Every edge finished to perfection',
+    text: 'Clean cuts, smooth edge banding and a finish that lasts for years.',
+    href: '/products', cta: 'Explore products',
+  },
+  {
     image: '/images/hero/hero-1.webp',
-    badge: 'Salem',
     title: 'Furniture that makes a room feel like home',
     text: 'Wooden and steel furniture, handcrafted in Salem.',
     href: '/products', cta: 'Explore products',
